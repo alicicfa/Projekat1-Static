@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Prijava - IPI Akademija</title>
+    <link rel="stylesheet" href="css/izgled.css" type="text/css" />
+    <style>
+        /* Sređivanje izgleda forme da bude u centru i crvene boje kao na tvom dizajnu */
+        .login-container { 
+            width: 350px; 
+            margin: 100px auto; 
+            padding: 30px; 
+            border: 2px solid #c30f10; 
+            border-radius: 15px; 
+            text-align: center; 
+            background-color: #f9f9f9;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+        }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .btn-prijava { 
+            background-color: #c30f10; 
+            color: white; 
+            border: none; 
+            padding: 12px; 
+            width: 95%; 
+            cursor: pointer; 
+            font-weight: bold; 
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn-prijava:hover { background-color: #a10d0d; }
+        a { color: #c30f10; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 style="color: #c30f10; margin-bottom: 20px;">PRIJAVA</h2>
+        <p style="font-size: 14px; color: #666;">Dobrodošli nazad!</p>
+        
+        <input type="email" id="email" placeholder="E-mail adresa">
+        <input type="password" id="pass" placeholder="Lozinka">
+        
+        <button class="btn-prijava" onclick="ulogujSe()">PRIJAVI SE</button>
+        
+        <p style="margin-top: 20px; font-size: 13px;">
+            Nemate nalog? <a href="registracija.html">Registrujte se</a>
+        </p>
+    </div>
+
+    <script>
+        function ulogujSe() {
+            var email = document.getElementById('email').value;
+            var pass = document.getElementById('pass').value;
+            
+            // Čitamo 'korisnikIme' jer si ga tako nazvala u registraciji na slici image_3c471e
+            var sacuvanoIme = localStorage.getItem('korisnikIme');
+
+            if (email !== "" && pass !== "") {
+                if (sacuvanoIme) {
+                    // Ako korisnik postoji u memoriji
+                    alert("Uspješna prijava! Dobrodošli nazad, " + sacuvanoIme);
+                    
+                    // TAČKA 2: Otvaranje Angulara u NOVOM TABU
+                    window.open("http://localhost:4200/", "_blank");
+                } else {
+                    // Ako se neko pokuša prijaviti, a nikad se nije registrovao
+                    alert("Niste registrovani. Molimo registrujte se prvo.");
+                    window.location.href = "registracija.html";
+                }
+            } else {
+                alert("Molimo unesite email i lozinku!");
+            }
+        }
+    </script>
+</body>
+</html>

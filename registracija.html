@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Registracija - IPI Akademija</title>
+    <link rel="stylesheet" href="css/izgled.css" type="text/css" />
+    <style>
+        .reg-container { width: 350px; margin: 50px auto; padding: 20px; border: 2px solid #c30f10; border-radius: 10px; text-align: center; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        .btn-reg { background-color: #c30f10; color: white; border: none; padding: 12px; width: 95%; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="reg-container">
+        <h2 style="color: #c30f10;">KREIRAJ NALOG</h2>
+        <input type="text" id="regIme" placeholder="Vaše ime">
+        <input type="email" id="regEmail" placeholder="E-mail adresa">
+        <input type="password" id="regPass" placeholder="Lozinka">
+        
+        <label style="display:block; margin-top:10px;">Izaberi boju teme (Tačka 3):</label>
+        <select id="regTema">
+            <option value="red">Standardna Crvena</option>
+            <option value="blue">Plava Tema</option>
+            <option value="green">Zelena Tema</option>
+        </select>
+
+        <button class="btn-reg" onclick="obradiRegistraciju()">REGISTRUJ SE</button>
+    </div>
+
+    <script>
+        function obradiRegistraciju() {
+            const ime = document.getElementById('regIme').value;
+            const tema = document.getElementById('regTema').value;
+            
+            if(ime === "") { alert("Unesi ime!"); return; }
+
+            // SPAŠAVANJE PODATAKA KOJE ĆE ANGULAR KASNIJE ČITATI
+            localStorage.setItem('korisnikIme', ime);
+            localStorage.setItem('korisnikTema', tema);
+            
+            alert("Uspješno! Sada se prijavi.");
+            window.location.href = "prijava.html";
+        }
+    </script>
+</body>
+</html>
