@@ -1,0 +1,158 @@
+html {
+    background: #e1e4e8; 
+}
+
+body {
+    font-size: 12px;
+    font-family: Verdana, Arial, sans-serif;
+    color: #484645;
+    margin: 0;
+    line-height: 1.6;
+}
+
+header img {
+    margin: 10px 0 10px 30px;
+}
+
+header, article {
+    width: 80%;
+    margin: 0px auto;
+    background-color: white;
+}
+
+nav {
+    background-color: #4a69bd; 
+    padding: 5px 0;
+}
+
+nav a, nav a:hover, nav a:visited, nav a:active {
+    color: white;
+    padding: 10px 20px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+nav a {
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+}
+
+nav ul li {
+    display: inline-block;
+}
+
+
+a, a:hover, a:visited, a:active {
+    color: #4a69bd;
+    font-weight: bold;
+}
+
+h2, h3 {
+    color: #4a69bd;
+}
+
+article {
+    padding: 20px 40px;
+    box-sizing: border-box;
+    border-bottom: 3px solid #4a69bd; 
+    min-height: 600px;
+}
+
+article img {
+    float: right;
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+footer {
+    padding-top: 15px;
+    min-height: 30px;
+    background: #484645; 
+    color: white;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    font-size: 12px;
+    border: solid 1px #d1d8e0;
+    padding: 5px 3px;
+}
+
+th {
+    color: #484645;
+    background-color: #f1f2f6; 
+    height: 30px;
+}
+
+td:nth-child(4) {
+    text-align: right;
+    padding-right: 5px;
+}
+
+tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+iframe {
+    margin-top: 20px;
+}
+
+fieldset {
+    width: 50%;
+    margin-bottom: 15px;
+    background-color: #f7f9fb;
+    border: 1px solid #d1d8e0;
+}
+
+fieldset legend {
+    color: #4a69bd;
+    font-weight: bold;
+}
+
+label {
+    display: inline-block;
+    width: 30%;
+}
+
+input[type=radio] + label, input[type=checkbox] + label {
+    width: auto;
+}
+
+select, input[type=text], input[type=email], textarea {
+    box-sizing: border-box;
+    width: 60%;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+input[type=checkbox] {
+    margin-left: 30%;
+}
+
+button {
+    background-color: #4a69bd; 
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #38ada9; 
+}
