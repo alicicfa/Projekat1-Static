@@ -1,153 +1,123 @@
-// ======= Vision Board Logic =======
+const canvas=document.getElementById("board");
+const ctx=canvas.getContext("2d");
 
-// Odaberi glavni element
-const board = document.getElementById("board");
-const addNoteBtn = document.getElementById("addNoteBtn");
-const addImageBtn = document.getElementById("addImageBtn");
-const addQuoteBtn = document.getElementById("addQuoteBtn");
-const saveBtn = document.getElementById("saveBtn");
-const clearBtn = document.getElementById("clearBtn");
+const colorPicker=document.getElementById("colorPicker");
+const brushSize=document.getElementById("brushSize");
+const clearBtn=document.getElementById("clearBtn");
+const saveBtn=document.getElementById("saveBtn");
+const eraserBtn=document.getElementById("eraserBtn");
 
-// Boje za ljepljive bilješke
-const colors = ["color1", "color2", "color3", "color4", "color5", "color6"];
+let drawing=false; 
+let currentColor=colorPicker.value;
+let isErasing=false;
 
-// Primjeri slika i citata
-const sampleImages = [
-  "slike/slika1.png",
-  "slike/slika2.png",
-  "slike/slika3.png",
-  "slike/slika4.png"
-];
 
-// ISPRAVLJENI CITATI (bez duplih navodnika i s ispravnim znakovima)
-const sampleQuotes = [
-  "Svaka dovoljno napredna tehnologija jednaka je magiji. - Arthur C. Clarke",
-  "Tehnologija je riječ koja opisuje nešto što još ne funkcionira. - Douglas Adams",
-  "Ne osnivate zajednice. Zajednice već postoje. Pitanje koje treba postaviti je kako im možete pomoći da budu bolje. - Mark Zuckerberg"
-];
+function resizeCanvas() {
+    const dpr = window.devicePixelRatio||1; 
+   
+    const{width,height}=canvas.getBoundingClientRect();
 
-// ======= Uslužni program za stvaranje stavki koje se mogu povlaciti i brisati =======
-function makeDraggable(el) {
-  let offsetX, offsetY;
-
-  // Kreiranje delete (X) button
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "🗑️"; // Koristimo standardnu ikonu za kantu za smeće
-  delBtn.className = "delete-btn";
-  el.appendChild(delBtn);
-
-  // Brisanje elementa na click
-  delBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent starting drag
-    el.remove();
-  });
-
-  // logika povlacenja
-  el.addEventListener("mousedown", dragStart);
-
-  function dragStart(e) {
-    if (e.target === delBtn) return; // preskoci povlačenja ako se klikne X
-    offsetX = e.clientX - el.offsetLeft;
-    offsetY = e.clientY - el.offsetTop;
-    document.addEventListener("mousemove", drag);
-    document.addEventListener("mouseup", dragEnd);
-  }
-
-  function drag(e) {
-    e.preventDefault();
-    el.style.left = e.clientX - offsetX + "px";
-    el.style.top = e.clientY - offsetY + "px";
-  }
-
-  function dragEnd() {
-    document.removeEventListener("mousemove", drag);
-    document.removeEventListener("mouseup", dragEnd);
-  }
+    canvas.width=width*dpr;
+    canvas.height=height*dpr;
+    ctx.scale(dpr,dpr); 
+    ctx.fillStyle="#FFFFFF";
+    ctx.fillRect(0,0,width,height); 
 }
 
-// ======= Dodaj Post It =======
-addNoteBtn.addEventListener("click", () => {
-  const note = document.createElement("div");
-  note.className = "note " + colors[Math.floor(Math.random() * colors.length)];
-  note.contentEditable = "true";
-  note.style.left = Math.random() * 500 + "px";
-  note.style.top = Math.random() * 300 + "px";
-  // ISPRAVLJEN TEKST (uklonjeni čudni znakovi)
-  note.textContent = "Napišite nešto..."; 
-  makeDraggable(note);
-  board.appendChild(note);
-});
+window.addEventListener('load', resizeCanvas); 
+window.addEventListener('resize', resizeCanvas); 
 
-// ======= Dodatj sliku =======
-addImageBtn.addEventListener("click", () => {
-  const div = document.createElement("div");
-  div.className = "pinned-img";
-  div.style.left = Math.random() * 400 + "px";
-  div.style.top = Math.random() * 250 + "px";
-  const img = document.createElement("img");
-  img.src = sampleImages[Math.floor(Math.random() * sampleImages.length)];
-  div.appendChild(img);
-  makeDraggable(div);
-  board.appendChild(div);
-});
 
-// ======= Dodaj citat =======
-addQuoteBtn.addEventListener("click", () => {
-  const q = document.createElement("div");
-  q.className = "quote";
-  q.textContent = sampleQuotes[Math.floor(Math.random() * sampleQuotes.length)];
-  q.style.left = Math.random() * 400 + "px";
-  q.style.top = Math.random() * 250 + "px";
-  q.contentEditable = "true";
-  makeDraggable(q);
-  board.appendChild(q);
-});
+function startDraw(e) {
+    drawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    
+    const dpr = window.devicePixelRatio || 1;
+    const x = (clientX - rect.left) * scaleX / dpr;
+    const y = (clientY - rect.top) * scaleY / dpr; 
 
-// ======= Snimi Visual Board =======
-saveBtn.addEventListener("click", saveBoard);
-
-function saveBoard() {
-  const items = [];
-  document.querySelectorAll("#board > div").forEach((el) => {
-    const data = {
-      type: el.classList.contains("note")
-        ? "note"
-        : el.classList.contains("quote")
-        ? "quote"
-        : "image",
-      className: el.className,
-      html: el.innerHTML,
-      left: el.style.left,
-      top: el.style.top,
-    };
-    items.push(data);
-  });
-  localStorage.setItem("visionBoardItems", JSON.stringify(items));
-  alert("Board saved!");
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    draw(e); 
 }
 
-// ======= Ucitaj Visual Board =======
-function loadBoard() {
-  const data = localStorage.getItem("visionBoardItems");
-  if (!data) return;
-  const items = JSON.parse(data);
-  items.forEach((item) => {
-    const div = document.createElement("div");
-    div.className = item.className;
-    div.style.left = item.left;
-    div.style.top = item.top;
-    div.innerHTML = item.html;
-    if (item.type !== "image") div.contentEditable = "true";
-    makeDraggable(div);
-    board.appendChild(div);
-  });
+function endDraw() {
+    drawing = false;
+    ctx.beginPath();
 }
-loadBoard();
 
-// ======= Ocisti Visual Board =======
+function draw(e) {
+    if (!drawing) return;
+    
+    if (e.type.startsWith('touch')) {
+        e.preventDefault(); 
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    const clientX = e.clientX || e.touches?.[0]?.clientX;
+    const clientY = e.clientY || e.touches?.[0]?.clientY;
+    
+    const dpr = window.devicePixelRatio || 1;
+    const x = (clientX - rect.left) * scaleX / dpr;
+    const y = (clientY - rect.top) * scaleY / dpr; 
+    
+    ctx.lineWidth = brushSize.value;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = isErasing ? "#FFFFFF" : currentColor; // Gumica crta bijelom bojom
+    
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("mouseup", endDraw);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseleave", endDraw);
+    
+canvas.addEventListener("touchstart", startDraw);
+canvas.addEventListener("touchmove", (e) => {
+    draw(e);
+});
+
+	canvas.addEventListener("touchend", endDraw);
+	colorPicker.addEventListener("input", () => {
+		currentColor = colorPicker.value;
+		isErasing = false;
+		eraserBtn.textContent = "Briši"; 
+});
+    
+eraserBtn.addEventListener("click",() => {
+    isErasing = !isErasing;
+    eraserBtn.textContent = isErasing ? "Piši" : "Briši";
+    if (!isErasing) {
+        currentColor = colorPicker.value;
+    }
+});
+    
 clearBtn.addEventListener("click", () => {
-  if (confirm("Clear the board?")) {
-    board.innerHTML = "";
-    localStorage.removeItem("visionBoardItems");
-  }
+    const dpr = window.devicePixelRatio || 1;
+    const clearW = canvas.width / dpr;
+    const clearH = canvas.height / dpr;
+    
+    ctx.clearRect(0,0,clearW,clearH);
+    ctx.fillStyle ="#FFFFFF";
+    ctx.fillRect(0,0,clearW,clearH);
+});
+    
+saveBtn.addEventListener("click",() => {
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download ="moj_crtez.png";
+    link.click();
 });
